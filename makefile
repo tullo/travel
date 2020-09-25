@@ -1,4 +1,5 @@
-SHELL := /bin/bash
+#!make
+SHELL = /bin/bash -o pipefail
 
 # ==============================================================================
 # Building containers
@@ -26,8 +27,11 @@ ui:
 
 run: up seed browse
 
+config:
+	docker-compose -f zarf/compose/compose.yaml config
+
 up:
-	docker-compose -f zarf/compose/compose.yaml -f zarf/compose/compose-config.yaml up --detach --remove-orphans
+	docker-compose -f zarf/compose/compose.yaml up --detach --remove-orphans
 
 down:
 	docker-compose -f zarf/compose/compose.yaml down --remove-orphans
