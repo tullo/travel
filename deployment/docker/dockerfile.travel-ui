@@ -1,5 +1,5 @@
 # Build the Go Binary.
-FROM golang:1.15.2 as build_travel-ui
+FROM golang:1.15.2-alpine3.12 as builder
 ENV CGO_ENABLED 0
 ARG VCS_REF
 
@@ -23,9 +23,11 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG PACKAGE_NAME
 ARG PACKAGE_PREFIX
-COPY --from=build_travel-ui /service/app/travel-ui/assets/ /app/assets/
-COPY --from=build_travel-ui /service/app/travel-ui/travel-ui /app/travel-ui
+RUN addgroup -g 3000 -S app && adduser -u 100000 -S app -G app --no-create-home --disabled-password
+USER 100000
 WORKDIR /app
+COPY --from=builder --chown=app:app /service/app/travel-ui/assets/ /app/assets/
+COPY --from=builder --chown=app:app /service/app/travel-ui/travel-ui /app/travel-ui
 CMD ["/app/travel-ui"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
