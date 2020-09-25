@@ -11,7 +11,7 @@ services:
     container_name: dgraph-zero
     environment:
       DGRAPH_ZERO_MY: dgraph-zero:5080
-    image: dgraph/dgraph:master
+    image: dgraph/dgraph:v20.07.1
     networks:
       shared-network:
     
@@ -22,7 +22,7 @@ services:
     - dgraph-zero
     env_file:
       - alpha.env
-    image: dgraph/dgraph:master
+    image: dgraph/dgraph:v20.07.1
     networks:
       shared-network:
     ports:
