@@ -8,7 +8,7 @@ all: api ui
 
 api:
 	docker build \
-		-f zarf/docker/dockerfile.travel-api \
+		-f deployment/docker/dockerfile.travel-api \
 		-t travel-api-amd64:1.0 \
 		--build-arg VCS_REF=`git rev-parse HEAD` \
 		--build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
@@ -16,7 +16,7 @@ api:
 
 ui:
 	docker build \
-		-f zarf/docker/dockerfile.travel-ui \
+		-f deployment/docker/dockerfile.travel-ui \
 		-t travel-ui-amd64:1.0 \
 		--build-arg VCS_REF=`git rev-parse HEAD` \
 		--build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
@@ -28,25 +28,25 @@ ui:
 run: up seed browse
 
 config:
-	docker-compose -f zarf/compose/compose.yaml config
+	docker-compose -f deployment/docker/docker-compose.yaml config
 
 up:
-	docker-compose -f zarf/compose/compose.yaml up --detach --remove-orphans
+	docker-compose -f deployment/docker/docker-compose.yaml up --detach --remove-orphans
 
 down:
-	docker-compose -f zarf/compose/compose.yaml down --remove-orphans
+	docker-compose -f deployment/docker/docker-compose.yaml down --remove-orphans
 
 browse:
 	python -m webbrowser "http://localhost"
 
 logs:
-	docker-compose -f zarf/compose/compose.yaml logs -f
+	docker-compose -f deployment/docker/docker-compose.yaml logs -f
 
 # ==============================================================================
 # Running from within k8s/dev
 
 kind-up:
-	kind create cluster --image kindest/node:v1.18.8 --name dgraph-travel-cluster --config zarf/k8s/dev/kind-config.yaml
+	kind create cluster --image kindest/node:v1.18.8 --name dgraph-travel-cluster --config deployment/k8s/dev/kind-config.yaml
 
 kind-down:
 	kind delete cluster --name dgraph-travel-cluster
@@ -56,7 +56,7 @@ kind-load:
 	kind load docker-image travel-ui-amd64:1.0 --name dgraph-travel-cluster
 
 kind-services:
-	kustomize build zarf/k8s/dev | kubectl apply -f -
+	kustomize build deployment/k8s/dev | kubectl apply -f -
 
 kind-api: api
 	kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
@@ -90,17 +90,20 @@ kind-seed: kind-schema
 
 slash-run: slash-up seed slash-browse
 
+slash-conf:
+	docker-compose -f deployment/docker/docker-compose-slash.yaml config
+
 slash-up:
-	docker-compose -f zarf/compose/compose-slash.yaml -f zarf/compose/compose-slash-config.yaml up --detach --remove-orphans
+	docker-compose -f deployment/docker/docker-compose-slash.yaml up --detach --remove-orphans
 
 slash-down:
-	docker-compose -f zarf/compose/compose-slash.yaml down --remove-orphans
+	docker-compose -f deployment/docker/docker-compose-slash.yaml down --remove-orphans
 
 slash-browse:
 	python -m webbrowser "http://localhost"
 
 slash-logs:
-	docker-compose -f zarf/compose/compose-slash.yaml logs -f
+	docker-compose -f deployment/compose/compose-slash.yaml logs -f
 
 # ==============================================================================
 # Running Local
@@ -167,17 +170,17 @@ deps-cleancache:
 # ==============================================================================
 # Docker support
 
-FILES := $(shell docker ps -aq)
+containers := $$(docker ps -aq --filter name=travel-ui --filter name=travel-api --filter name=dgraph-alpha --filter name=dgraph-zero)
 
 down-local:
-	docker stop $(FILES)
-	docker rm $(FILES)
+	@docker container stop ${containers}
+	@docker container rm ${containers}
 
 clean:
 	docker system prune -f
 
 logs-local:
-	docker logs -f $(FILES)
+	@docker container logs -f $$(docker ps -aq --filter name=travel-api)
 
 # ==============================================================================
 # Git support
