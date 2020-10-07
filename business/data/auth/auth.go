@@ -42,15 +42,8 @@ func (c Claims) Valid(helper *jwt.ValidationHelper) error {
 	return nil
 }
 
-// HasRole returns true if the claims has at least one of the provided roles.
-func (c Claims) HasRole(roles ...string) bool {
-	for _, want := range roles {
-		if want == c.Auth.Role {
-			return true
-		}
-	}
-	return false
-}
+// Keys represents an in memory store of keys.
+type Keys map[string]*rsa.PrivateKey
 
 // Keys represents an in memory store of keys.
 type Keys map[string]*rsa.PrivateKey
