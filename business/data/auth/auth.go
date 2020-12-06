@@ -4,7 +4,7 @@ package auth
 import (
 	"crypto/rsa"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/pkg/errors"
 )
 
@@ -34,8 +34,8 @@ type Claims struct {
 }
 
 // Valid is called during the parsing of a token.
-func (c Claims) Valid() error {
-	if err := c.StandardClaims.Valid(); err != nil {
+func (c Claims) Valid(helper *jwt.ValidationHelper) error {
+	if err := c.StandardClaims.Valid(helper); err != nil {
 		return errors.Wrap(err, "validating standard claims")
 	}
 
@@ -100,16 +100,18 @@ func New(privateKey *rsa.PrivateKey, publicKID, algorithm string, publicKeyLooku
 	// Create the token parser to use. The algorithm used to sign the JWT must be
 	// validated to avoid a critical vulnerability:
 	// https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
-	parser := jwt.Parser{
-		ValidMethods: []string{algorithm},
-	}
+	var po []jwt.ParserOption
+	po = append(po, jwt.WithValidMethods([]string{algorithm}))
+	po = append(po, jwt.WithIssuer("travel project"))
+	po = append(po, jwt.WithAudience("students"))
+	parser := jwt.NewParser(po...)
 
 	a := Auth{
 		privateKey:       privateKey,
 		publicKID:        publicKID,
 		algorithm:        algorithm,
 		pubKeyLookupFunc: publicKeyLookupFunc,
-		parser:           &parser,
+		parser:           parser,
 	}
 
 	return &a, nil
@@ -150,6 +152,10 @@ func (a *Auth) ValidateToken(tokenStr string) (Claims, error) {
 	}
 
 	var claims Claims
+	//	var po []jwt.ParserOption
+	//	po = append(po, jwt.WithIssuer("travel project"))
+	//	po = append(po, jwt.WithAudience("students"))
+	//  token, err := jwt.ParseWithClaims(tokenStr, &claims, keyFunc, po...)
 	token, err := a.parser.ParseWithClaims(tokenStr, &claims, keyFunc)
 	if err != nil {
 		return Claims{}, errors.Wrap(err, "parsing token")

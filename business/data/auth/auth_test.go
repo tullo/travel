@@ -8,7 +8,7 @@ import (
 
 	"github.com/dgraph-io/travel/business/data/auth"
 	"github.com/dgraph-io/travel/foundation/tests"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/v4"
 )
 
 func TestAuthenticator(t *testing.T) {
@@ -43,9 +43,9 @@ func TestAuthenticator(t *testing.T) {
 				StandardClaims: jwt.StandardClaims{
 					Issuer:    "travel project",
 					Subject:   "0x01",
-					Audience:  "students",
-					ExpiresAt: time.Now().Add(8760 * time.Hour).Unix(),
-					IssuedAt:  time.Now().Unix(),
+					Audience:  []string{"students"},
+					ExpiresAt: jwt.NewTime(float64(time.Now().Add(8760 * time.Hour).Unix())),
+					IssuedAt:  jwt.NewTime(float64(time.Now().Unix())),
 				},
 				Auth: auth.StandardClaims{
 					Role: auth.RoleAdmin,
