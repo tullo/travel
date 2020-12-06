@@ -99,16 +99,17 @@ func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 	// validated to avoid a critical vulnerability:
 	// https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
 	var po []jwt.ParserOption
+	po = append(po, jwt.WithValidMethods([]string{algorithm}))
 	po = append(po, jwt.WithIssuer("travel project"))
 	po = append(po, jwt.WithAudience("students"))
 	parser := jwt.NewParser(po...)
 
 	a := Auth{
-		algorithm: algorithm,
-		method:    method,
-		keyFunc:   keyFunc,
-		parser:    parser,
-		keys:      keys,
+		privateKey:       privateKey,
+		publicKID:        publicKID,
+		algorithm:        algorithm,
+		pubKeyLookupFunc: publicKeyLookupFunc,
+		parser:           parser,
 	}
 
 	return &a, nil
@@ -156,7 +157,11 @@ func (a *Auth) GenerateToken(kid string, claims Claims) (string, error) {
 // verifies that the token was signed using our key.
 func (a *Auth) ValidateToken(tokenStr string) (Claims, error) {
 	var claims Claims
-	token, err := a.parser.ParseWithClaims(tokenStr, &claims, a.keyFunc)
+	//	var po []jwt.ParserOption
+	//	po = append(po, jwt.WithIssuer("travel project"))
+	//	po = append(po, jwt.WithAudience("students"))
+	//  token, err := jwt.ParseWithClaims(tokenStr, &claims, keyFunc, po...)
+	token, err := a.parser.ParseWithClaims(tokenStr, &claims, keyFunc)
 	if err != nil {
 		return Claims{}, errors.Wrap(err, "parsing token")
 	}
