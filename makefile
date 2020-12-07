@@ -32,7 +32,6 @@ ui:
 
 run: compose-up seed browse
 
-<<<<<<< HEAD
 compose-config:
 	docker-compose -f deployment/docker/docker-compose.yaml \
 	-f deployment/docker/docker-compose.override.yaml \
@@ -52,36 +51,12 @@ compose-logs:
 	docker-compose -f deployment/docker/docker-compose.yaml \
 	-f deployment/docker/docker-compose.override.yaml \
 	logs -f
-=======
-config:
-	docker-compose -f deployment/docker/docker-compose.yaml config
-
-up:
-	docker-compose -f deployment/docker/docker-compose.yaml up --detach --remove-orphans
-
-down:
-	docker-compose -f deployment/docker/docker-compose.yaml down --remove-orphans
-
-browse:
-	python -m webbrowser "http://localhost"
-
-logs:
-	docker-compose -f deployment/docker/docker-compose.yaml logs -f
->>>>>>> 78a92bc... rename zarf folder
 
 # ==============================================================================
 # Running from within k8s/dev
 
 kind-up:
-<<<<<<< HEAD
 	$(shell go env GOPATH)/bin/kind create cluster --image kindest/node:v1.20.2 --name dgraph-travel-cluster --config deployment/k8s/dev/kind-config.yaml
-=======
-<<<<<<< HEAD
-	kind create cluster --image kindest/node:v1.20.0 --name dgraph-travel-cluster --config zarf/k8s/dev/kind-config.yaml
-=======
-	kind create cluster --image kindest/node:v1.18.8 --name dgraph-travel-cluster --config deployment/k8s/dev/kind-config.yaml
->>>>>>> 9ef171b... rename zarf folder
->>>>>>> 78a92bc... rename zarf folder
 
 kind-down:
 	$(shell go env GOPATH)/bin/kind delete cluster --name dgraph-travel-cluster
@@ -94,11 +69,7 @@ kind-list:
 	@docker exec -it dgraph-travel-cluster-control-plane crictl images
 
 kind-services:
-<<<<<<< HEAD
 	$(shell go env GOPATH)/bin/kustomize build deployment/k8s/dev | kubectl apply -f -
-=======
-	kustomize build deployment/k8s/dev | kubectl apply -f -
->>>>>>> 78a92bc... rename zarf folder
 
 kind-api: api
 	$(shell go env GOPATH)/bin/kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
@@ -145,11 +116,7 @@ slash-browse:
 	python -m webbrowser "http://localhost"
 
 slash-logs:
-<<<<<<< HEAD
 	docker-compose -f deployment/docker/docker-compose-slash.yaml logs -f
-=======
-	docker-compose -f deployment/compose/compose-slash.yaml logs -f
->>>>>>> 78a92bc... rename zarf folder
 
 # ==============================================================================
 # Running Local
