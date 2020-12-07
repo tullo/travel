@@ -53,13 +53,13 @@ spec:
               key: map_key
         ports:
         - name: ui
-          containerPort: 80
+          containerPort: 3080
         - name: ui-debug
           containerPort: 4080
         readinessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: 3080
           initialDelaySeconds: 30
           periodSeconds: 15
 ---
@@ -72,7 +72,7 @@ spec:
     service: travel
   ports:
   - name: ui
-    port: 80
+    port: 3080
     targetPort: ui
   - name: ui-debug
     port: 4080
