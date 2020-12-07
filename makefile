@@ -46,24 +46,27 @@ logs:
 # Running from within k8s/dev
 
 kind-up:
-	kind create cluster --image kindest/node:v1.18.8 --name dgraph-travel-cluster --config deployment/k8s/dev/kind-config.yaml
+	$(shell go env GOPATH)/bin/kind create cluster --image kindest/node:v1.19.4 --name dgraph-travel-cluster --config deployment/k8s/dev/kind-config.yaml
 
 kind-down:
-	kind delete cluster --name dgraph-travel-cluster
+	$(shell go env GOPATH)/bin/kind delete cluster --name dgraph-travel-cluster
 
 kind-load:
-	kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
-	kind load docker-image travel-ui-amd64:1.0 --name dgraph-travel-cluster
+	$(shell go env GOPATH)/bin/kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
+	$(shell go env GOPATH)/bin/kind load docker-image travel-ui-amd64:1.0 --name dgraph-travel-cluster
+
+kind-list:
+	@docker exec -it dgraph-travel-cluster-control-plane crictl images
 
 kind-services:
-	kustomize build deployment/k8s/dev | kubectl apply -f -
+	$(shell go env GOPATH)/bin/kustomize build deployment/k8s/dev | kubectl apply -f -
 
 kind-api: api
-	kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
+	$(shell go env GOPATH)/bin/kind load docker-image travel-api-amd64:1.0 --name dgraph-travel-cluster
 	kubectl delete pods -lapp=travel
 
 kind-ui: ui
-	kind load docker-image travel-ui-amd64:1.0 --name dgraph-travel-cluster
+	$(shell go env GOPATH)/bin/kind load docker-image travel-ui-amd64:1.0 --name dgraph-travel-cluster
 	kubectl delete pods -lapp=travel
 
 kind-logs:
@@ -77,7 +80,7 @@ kind-status-full:
 	kubectl describe pod -lapp=travel
 
 kind-delete:
-	kustomize build . | kubectl delete -f -
+	$(shell go env GOPATH)/bin/kustomize build deployment/k8s/dev | kubectl delete -f -
 
 kind-schema:
 	go run app/travel-admin/main.go --custom-functions-upload-feed-url=http://localhost:3000/v1/feed/upload schema
