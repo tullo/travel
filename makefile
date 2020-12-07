@@ -1,5 +1,10 @@
 #!make
 SHELL = /bin/bash -o pipefail
+export DOCKER_BUILDKIT = 1
+export COMPOSE_DOCKER_CLI_BUILD = 1
+
+browse:
+	sensible-browser --new-tab http://0.0.0.0:3080/ </dev/null >/dev/null 2>&1 & disown
 
 # ==============================================================================
 # Building containers
@@ -10,36 +15,33 @@ api:
 	docker build \
 		-f deployment/docker/dockerfile.travel-api \
 		-t travel-api-amd64:1.0 \
-		--build-arg VCS_REF=`git rev-parse HEAD` \
-		--build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+		--build-arg VCS_REF=$$(git rev-parse HEAD) \
+		--build-arg BUILD_DATE=$$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
 		.
 
 ui:
 	docker build \
 		-f deployment/docker/dockerfile.travel-ui \
 		-t travel-ui-amd64:1.0 \
-		--build-arg VCS_REF=`git rev-parse HEAD` \
-		--build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+		--build-arg VCS_REF=$$(git rev-parse HEAD) \
+		--build-arg BUILD_DATE=$$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
 		.
 
 # ==============================================================================
 # Running from within docker compose
 
-run: up seed browse
+run: compose-up seed browse
 
 config:
 	docker-compose -f deployment/docker/docker-compose.yaml config
 
-up:
+compose-up:
 	docker-compose -f deployment/docker/docker-compose.yaml up --detach --remove-orphans
 
-down:
+compose-down:
 	docker-compose -f deployment/docker/docker-compose.yaml down --remove-orphans
 
-browse:
-	sensible-browser --new-tab http://0.0.0.0:3080/ </dev/null >/dev/null 2>&1 & disown
-
-logs:
+compose-logs:
 	docker-compose -f deployment/docker/docker-compose.yaml logs -f
 
 # ==============================================================================
