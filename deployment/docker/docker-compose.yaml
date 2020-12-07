@@ -50,11 +50,12 @@ services:
     - dgraph-alpha
     environment:
       TRAVEL_API_KEYS_MAPS_KEY: ''
+      TRAVEL_WEB_UI_HOST: '0.0.0.0:3080'
     image: travel-ui-amd64:1.0
     networks:
       shared-network:
     ports:
-    - published: 80 # API
-      target: 80
-    - published: 4080 # DEBUG API
+    - published: 3080 # UI
+      target: 3080
+    - published: 4080 # DEBUG UI
       target: 4080
