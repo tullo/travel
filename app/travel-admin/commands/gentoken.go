@@ -85,7 +85,7 @@ func GenToken(log *log.Logger, gqlConfig data.GraphQLConfig, email string, priva
 	claims := auth.Claims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    "travel project",
-			Subject:   user.ID,
+			Subject:   usr.ID,
 			Audience:  []string{"students"},
 			ExpiresAt: jwt.NewTime(float64(time.Now().Add(8760 * time.Hour).Unix())),
 			IssuedAt:  jwt.NewTime(float64(time.Now().Unix())),
