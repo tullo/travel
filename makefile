@@ -106,7 +106,7 @@ slash-browse:
 	python -m webbrowser "http://localhost"
 
 slash-logs:
-	docker-compose -f deployment/compose/compose-slash.yaml logs -f
+	docker-compose -f deployment/docker/docker-compose-slash.yaml logs -f
 
 # ==============================================================================
 # Running Local
@@ -142,7 +142,7 @@ ui-logs:
 schema:
 	go run app/travel-admin/main.go schema
 
-seed: schema
+seed:
 	go run app/travel-admin/main.go seed
 
 # Running tests within the local computer

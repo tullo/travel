@@ -24,7 +24,7 @@ services:
     networks:
       shared-network:
     ports:
-    - published: 80 # API
-      target: 80
-    - published: 4080 # DEBUG API
+    - published: 3080 # UI
+      target: 3080
+    - published: 4080 # DEBUG UI
       target: 4080
