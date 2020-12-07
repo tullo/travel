@@ -37,7 +37,7 @@ down:
 	docker-compose -f deployment/docker/docker-compose.yaml down --remove-orphans
 
 browse:
-	python -m webbrowser "http://localhost"
+	sensible-browser --new-tab http://0.0.0.0:3080/ </dev/null >/dev/null 2>&1 & disown
 
 logs:
 	docker-compose -f deployment/docker/docker-compose.yaml logs -f
