@@ -142,14 +142,14 @@ ui-logs:
 schema:
 	go run app/travel-admin/main.go schema
 
-seed:
+seed: schema
 	go run app/travel-admin/main.go seed
 
 # Running tests within the local computer
 
 test:
 	go test ./... -count=1
-	staticcheck ./...
+	$(shell go env GOPATH)/bin/staticcheck ./...
 
 # Modules support
 
