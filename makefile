@@ -32,17 +32,25 @@ ui:
 
 run: compose-up seed browse
 
-config:
-	docker-compose -f deployment/docker/docker-compose.yaml config
+compose-config:
+	docker-compose -f deployment/docker/docker-compose.yaml \
+	-f deployment/docker/docker-compose.override.yaml \
+	config
 
 compose-up:
-	docker-compose -f deployment/docker/docker-compose.yaml up --detach --remove-orphans
+	docker-compose -f deployment/docker/docker-compose.yaml \
+	-f deployment/docker/docker-compose.override.yaml \
+	up --detach --remove-orphans
 
 compose-down:
-	docker-compose -f deployment/docker/docker-compose.yaml down --remove-orphans
+	docker-compose -f deployment/docker/docker-compose.yaml \
+	-f deployment/docker/docker-compose.override.yaml \
+	down --remove-orphans
 
 compose-logs:
-	docker-compose -f deployment/docker/docker-compose.yaml logs -f
+	docker-compose -f deployment/docker/docker-compose.yaml \
+	-f deployment/docker/docker-compose.override.yaml \
+	logs -f
 
 # ==============================================================================
 # Running from within k8s/dev
