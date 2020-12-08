@@ -34,8 +34,8 @@ spec:
           containerPort: 4000
         readinessProbe:
           httpGet:
-            path: /v1/readiness
-            port: 3000
+            path: /debug/readiness
+            port: api-debug
           initialDelaySeconds: 30
           periodSeconds: 15
       - name: ui
@@ -58,8 +58,8 @@ spec:
           containerPort: 4080
         readinessProbe:
           httpGet:
-            path: /readiness
-            port: 3080
+            path: /debug/readiness
+            port: ui-debug
           initialDelaySeconds: 30
           periodSeconds: 15
 ---
