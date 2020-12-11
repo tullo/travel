@@ -1,6 +1,6 @@
 # Travel
 
-[![CircleCI](https://circleci.com/gh/dgraph-io/travel.svg?style=svg)](https://circleci.com/gh/dgraph-io/travel)
+![CodeQL](https://github.com/tullo/travel/workflows/CodeQL/badge.svg)
 
 Copyright 2020 Dgraph
 contact@dgraph.io
