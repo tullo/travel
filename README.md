@@ -1,5 +1,6 @@
 # Travel
 
+![Go](https://github.com/tullo/travel/workflows/Go/badge.svg)
 ![CodeQL](https://github.com/tullo/travel/workflows/CodeQL/badge.svg)
 
 Copyright 2020 Dgraph
