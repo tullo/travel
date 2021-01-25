@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: [ tullo ]
   pull_request:
-    branches: [ master ]
+    branches: [ tullo ]
 
 jobs:
 
