@@ -81,11 +81,20 @@ function makechart(data) {
     document.querySelector("div.graphbox").appendChild(chart);
 }
 
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function drawchart(city) {
     document.querySelector("div.graphbox").innerHTML = "";
     
     const err = function(error) {
-        document.querySelector("div.graphbox").innerHTML = "no data for city: " + city;
+        document.querySelector("div.graphbox").innerHTML = "no data for city: " + escapeHtml(city);
     }
     d3.json("/data/" + city).then(makechart).catch(err);
 }
