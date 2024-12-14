@@ -21,7 +21,7 @@ github.com/go-playground/locales/en
 # github.com/go-playground/universal-translator v0.17.0
 ## explicit
 github.com/go-playground/universal-translator
-# github.com/google/go-cmp v0.5.4
+# github.com/google/go-cmp v0.6.0
 ## explicit
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
@@ -47,7 +47,7 @@ go.opencensus.io/stats
 go.opencensus.io/stats/internal
 go.opencensus.io/stats/view
 go.opencensus.io/tag
-# golang.org/x/crypto v0.17.0
+# golang.org/x/crypto v0.31.0
 ## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
