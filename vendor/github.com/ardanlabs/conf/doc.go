@@ -15,6 +15,7 @@ to customize the flag options.
 	flag     - Allows for overriding the default flag name.
 	short    - Denotes a shorthand option for the flag.
 	noprint  - Denotes to not include the field in any display string.
+	mask     - Includes the field in any display string but masks out the value.
 	required - Denotes a value must be provided.
 	help     - Provides a description for the help.
 
@@ -104,9 +105,12 @@ your config type
 Then you can set these values at run time for display.
 
 	cfg := struct {
+		Version conf.Version
+	}{
 		Version: conf.Version{
-			SVN: "v1.0.0",
+			SVN:  "v1.0.0",
 			Desc: "Service Description",
+		},
 	}
 
 	if err := conf.Parse(os.Args[1:], "APP", &cfg); err != nil {

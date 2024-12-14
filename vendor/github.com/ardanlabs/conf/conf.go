@@ -3,6 +3,8 @@ package conf
 import (
 	"errors"
 	"fmt"
+	"net/url"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -38,29 +40,32 @@ type Version struct {
 	Desc string
 }
 
-// VersionString provides output to display the application version and description on the command line.
-func VersionString(namespace string, v interface{}) (string, error) {
-	fields, err := extractFields(nil, v)
-	if err != nil {
-		return "", err
+// ParseOSArgs parses the configuration allowing command line
+// arguments to override settings. Function returns ErrHelpWanted
+// for any information to be provided to the user.
+func ParseOSArgs(prefix string, cfg interface{}) (string, error) {
+	err := Parse(os.Args[1:], prefix, cfg)
+	if err == nil {
+		return "", nil
 	}
 
-	var str strings.Builder
-	for i := range fields {
-		if fields[i].Name == versionKey && fields[i].Field.Len() > 0 {
-			str.WriteString("Version: ")
-			str.WriteString(fields[i].Field.String())
-			continue
+	switch err {
+	case ErrHelpWanted:
+		usage, err := Usage(prefix, cfg)
+		if err != nil {
+			return "", fmt.Errorf("generating config usage: %w", err)
 		}
-		if fields[i].Name == descKey && fields[i].Field.Len() > 0 {
-			if str.Len() > 0 {
-				str.WriteString("\n")
-			}
-			str.WriteString(fields[i].Field.String())
-			break
+		return usage, ErrHelpWanted
+
+	case ErrVersionWanted:
+		version, err := VersionString(prefix, cfg)
+		if err != nil {
+			return "", fmt.Errorf("generating config version: %w", err)
 		}
+		return version, ErrHelpWanted
 	}
-	return str.String(), nil
+
+	return "", fmt.Errorf("parsing config: %w", err)
 }
 
 // Parse parses configuration into the provided struct.
@@ -152,6 +157,31 @@ func Usage(namespace string, v interface{}) (string, error) {
 	return fmtUsage(namespace, fields), nil
 }
 
+// VersionString provides output to display the application version and description on the command line.
+func VersionString(namespace string, v interface{}) (string, error) {
+	fields, err := extractFields(nil, v)
+	if err != nil {
+		return "", err
+	}
+
+	var str strings.Builder
+	for i := range fields {
+		if fields[i].Name == versionKey && fields[i].Field.Len() > 0 {
+			str.WriteString("Version: ")
+			str.WriteString(fields[i].Field.String())
+			continue
+		}
+		if fields[i].Name == descKey && fields[i].Field.Len() > 0 {
+			if str.Len() > 0 {
+				str.WriteString("\n")
+			}
+			str.WriteString(fields[i].Field.String())
+			break
+		}
+	}
+	return str.String(), nil
+}
+
 // String returns a stringified version of the provided conf-tagged
 // struct, minus any fields tagged with `noprint`.
 func String(v interface{}) (string, error) {
@@ -162,13 +192,32 @@ func String(v interface{}) (string, error) {
 
 	var s strings.Builder
 	for i, fld := range fields {
-		if !fld.Options.Noprint {
-			s.WriteString(flagUsage(fld))
-			s.WriteString("=")
-			s.WriteString(fmt.Sprintf("%v", fld.Field.Interface()))
-			if i < len(fields)-1 {
-				s.WriteString("\n")
+		if fld.Options.Noprint {
+			continue
+		}
+
+		s.WriteString(flagUsage(fld))
+		s.WriteString("=")
+		v := fmt.Sprintf("%v", fld.Field.Interface())
+
+		switch {
+		case fld.Options.Mask:
+			if u, err := url.Parse(v); err == nil {
+				userPass := u.User.String()
+				if userPass != "" {
+					v = strings.Replace(v, userPass, "xxxxxx:xxxxxx", 1)
+					s.WriteString(v)
+					break
+				}
 			}
+			s.WriteString("xxxxxx")
+
+		default:
+			s.WriteString(v)
+		}
+
+		if i < len(fields)-1 {
+			s.WriteString("\n")
 		}
 	}
 
