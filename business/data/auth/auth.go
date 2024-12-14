@@ -46,9 +46,6 @@ func (c Claims) Valid(helper *jwt.ValidationHelper) error {
 // Keys represents an in memory store of keys.
 type Keys map[string]*rsa.PrivateKey
 
-// Keys represents an in memory store of keys.
-type Keys map[string]*rsa.PrivateKey
-
 // PublicKeyLookup defines the signature of a function to lookup public keys.
 //
 // In a production system, a key id (KID) is used to retrieve the correct
