@@ -15,7 +15,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/crypto v0.31.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/time v0.8.0 // indirect
 	googlemaps.github.io/maps v1.7.0
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
